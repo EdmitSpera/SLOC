@@ -14,6 +14,7 @@
         <module>secretary</module>
         <module>activity</module>
         <module>management</module>
+        <module>framework</module>
     </modules>
 
     <properties>
@@ -34,6 +35,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.learning.springboot</groupId>
+                <artifactId>sloc-framework</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
