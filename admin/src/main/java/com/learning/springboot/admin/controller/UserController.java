@@ -1,8 +1,10 @@
 package com.learning.springboot.admin.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.learning.springboot.admin.dto.req.*;
 import com.learning.springboot.admin.dto.resp.UserAccountRespDTO;
 import com.learning.springboot.admin.dto.resp.UserInformationRespDTO;
+import com.learning.springboot.admin.dto.resp.UserPageRespDTO;
 import com.learning.springboot.admin.service.UserService;
 import com.learning.springboot.framework.result.Result;
 import com.learning.springboot.framework.result.Results;
@@ -18,10 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    /**
-     * 注册用户
-     * @param requestParam
-     */
     @Operation(summary = "注册用户")
     @PostMapping("/api/sloc/admin/register")
     public Result<Void> register(@RequestBody registerUserReqDTO requestParam) {
@@ -29,10 +27,6 @@ public class UserController {
         return Results.success();
     }
 
-    /**
-     * 根据Excel注册用户
-     * @param filePath
-     */
     @Operation(summary = "根据Excel注册用户")
     @GetMapping("/api/sloc/admin/excelRegister")
     public Result<Void> registerUsersExcel(@RequestParam String filePath) {
@@ -40,11 +34,6 @@ public class UserController {
         return Results.success();
     }
 
-    /**
-     * 根据年级写Excel
-     * @param grade 年级
-     * @param filePath 写路径
-     */
     @Operation(summary = "根据年级信息写Excel")
     @GetMapping("/api/sloc/admin/excelWriter")
     public Result<Void> writeExcelBasedDatabase(@RequestParam int grade, @RequestParam String filePath) {
@@ -52,11 +41,6 @@ public class UserController {
         return Results.success();
     }
 
-    /**
-     * 删除用户
-     * @param requestParam 用户名
-     * @return
-     */
     @Operation(summary = "删除用户")
     @PutMapping("/api/sloc/admin/delete")
     public Result<Void> delete(@RequestBody deleteUserReqDTO requestParam){
@@ -88,5 +72,11 @@ public class UserController {
     public Result<Void> updateUserInformation(@RequestBody updateUserInfoReqDTO requestParam){
         userService.updateUserInformation(requestParam);
         return Results.success();
+    }
+
+    @Operation(summary = "根据年级或部门分页查询")
+    @GetMapping("/api/sloc/admin/getUserPage")
+    public Result<IPage<UserPageRespDTO>> getUserPage(@RequestBody UserPageReqDTO requestParam){
+        return Results.success(userService.getUserPage(requestParam));
     }
 }

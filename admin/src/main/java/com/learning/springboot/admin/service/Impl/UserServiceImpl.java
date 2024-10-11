@@ -6,7 +6,9 @@ import com.alibaba.excel.read.listener.PageReadListener;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.learning.springboot.admin.dao.entity.ExcelReadUserDo;
 import com.learning.springboot.admin.dao.entity.ExcelWriteUserDo;
@@ -15,6 +17,7 @@ import com.learning.springboot.admin.dao.mapper.UserMapper;
 import com.learning.springboot.admin.dto.req.*;
 import com.learning.springboot.admin.dto.resp.UserAccountRespDTO;
 import com.learning.springboot.admin.dto.resp.UserInformationRespDTO;
+import com.learning.springboot.admin.dto.resp.UserPageRespDTO;
 import com.learning.springboot.admin.service.UserService;
 import com.learning.springboot.admin.util.DigitNumberGenerator;
 import com.learning.springboot.framework.exception.ClientException;
@@ -322,6 +325,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
         } catch (Exception e) {
             throw new ServiceException("更新缓存时发生错误：" + e.getMessage());
         }
+    }
+
+    @Override
+    public IPage<UserPageRespDTO> getUserPage(UserPageReqDTO requestParam) {
+        // 获取分页参数
+        Page<UserDo> page = new Page<>(requestParam.getCurrent(), requestParam.getSize());
+
+        // 构造查询条件
+        LambdaQueryWrapper<UserDo> queryWrapper = new LambdaQueryWrapper<>();
+
+        // 三种情况：1、根据年级查 2、根据部门查 3、根据年级和部门查
+        if (requestParam.getGrade() != null) {
+            queryWrapper.eq(UserDo::getGrade, requestParam.getGrade());
+        }
+        if (requestParam.getDepartment() != null) {
+            queryWrapper.eq(UserDo::getDepartment, requestParam.getDepartment());
+        }
+
+        // 分页查询
+        IPage<UserDo> userPage = baseMapper.selectPage(page, queryWrapper);
+        return userPage.convert(each -> {
+            UserPageRespDTO result = BeanUtil.toBean(each, UserPageRespDTO.class);
+            return result;
+        });
     }
 
 }

@@ -1,10 +1,12 @@
 package com.learning.springboot.admin.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.learning.springboot.admin.dao.entity.UserDo;
 import com.learning.springboot.admin.dto.req.*;
 import com.learning.springboot.admin.dto.resp.UserAccountRespDTO;
 import com.learning.springboot.admin.dto.resp.UserInformationRespDTO;
+import com.learning.springboot.admin.dto.resp.UserPageRespDTO;
 
 public interface UserService extends IService<UserDo> {
     /**
@@ -49,7 +51,23 @@ public interface UserService extends IService<UserDo> {
      */
     UserInformationRespDTO getUserInformation(UserInformationReqDTO requestParam);
 
+    /**
+     *
+     * @param requestParam
+     */
     void updateUserAccount(updateUserAccReqDTO requestParam);
 
+    /**
+     *
+     * @param requestParam
+     */
     void updateUserInformation(updateUserInfoReqDTO requestParam);
+
+    /**
+     *
+     * @param requestParam
+     * @return
+     */
+    IPage<UserPageRespDTO> getUserPage(UserPageReqDTO requestParam);
+
 }
