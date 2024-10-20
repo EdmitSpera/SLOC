@@ -8,4 +8,9 @@ public class DeleteDetailBonusReqDTO {
      * 用户Id
      */
     private String userId;
+
+    /**
+     * 积分明细
+     */
+    private String bonusItem;
 }

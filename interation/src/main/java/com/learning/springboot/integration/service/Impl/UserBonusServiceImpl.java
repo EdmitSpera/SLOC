@@ -87,30 +87,39 @@ public class UserBonusServiceImpl extends ServiceImpl<UserDetailBonusMapper, Use
     @Override
     public void deleteUserDetailBonus(DeleteDetailBonusReqDTO requestParam) {
         try {
+            String bonusItem = requestParam.getBonusItem();
+            BonusPointsEnum bonusPointsEnum = Arrays.stream(BonusPointsEnum.values())
+                    .filter(item -> item.bonusItem().equals(bonusItem))
+                    .findFirst()
+                    .orElseThrow(() -> new ClientException("无效的加分项:" + bonusItem));
+
             // 依次找到对应的明细记录 总积分记录
             LambdaQueryWrapper<UserDetailBonusDo> detailQueryWrapper = Wrappers.lambdaQuery(UserDetailBonusDo.class)
                     .eq(UserDetailBonusDo::getUserId, requestParam.getUserId())
+                    .eq(UserDetailBonusDo::getBonusItem, bonusItem)
                     .eq(UserDetailBonusDo::getDel_flag, 0);
             LambdaQueryWrapper<UserBonusDo> bonusQueryWrapper = Wrappers.lambdaQuery(UserBonusDo.class)
                     .eq(UserBonusDo::getUserId, requestParam.getUserId())
                     .eq(UserBonusDo::getDel_flag, 0);
 
-            UserDetailBonusDo userDetailBonusDo = baseMapper.selectOne(detailQueryWrapper);
+            // 使用 selectList 查询多个记录
+            List<UserDetailBonusDo> userDetailBonusList = baseMapper.selectList(detailQueryWrapper);
             UserBonusDo userBonusDo = userBonusMapper.selectOne(bonusQueryWrapper);
 
             // 非空检查，防止空指针异常
-            if (userDetailBonusDo == null) {
+            if (userDetailBonusList == null) {
                 throw new ClientException("未找到对应的加分明细记录");
             }
             if (userBonusDo == null) {
                 throw new ClientException("未找到对应的总积分记录");
             }
 
+            UserDetailBonusDo userDetailBonusDo = userDetailBonusList.get(0);
+
             // 逻辑删除对应的明细记录
             userDetailBonusDo.setDel_flag(1);
             LambdaUpdateWrapper<UserDetailBonusDo> bonusDoLambdaUpdateWrapper = Wrappers.lambdaUpdate(UserDetailBonusDo.class)
-                    .eq(UserDetailBonusDo::getUserId, requestParam.getUserId())
-                    .eq(UserDetailBonusDo::getDel_flag, 0);
+                    .eq(UserDetailBonusDo::getIntegrationId, userDetailBonusDo.getIntegrationId()); // 使用主键进行更新
             int detailUpdate = baseMapper.update(userDetailBonusDo, bonusDoLambdaUpdateWrapper);
             if (detailUpdate != 1) {
                 throw new DatabaseException("删除加分明细记录失败");
@@ -186,10 +195,10 @@ public class UserBonusServiceImpl extends ServiceImpl<UserDetailBonusMapper, Use
             throw e;
         } catch (TransactionException e) {
             // 捕获事务异常并抛出
-            throw new ServiceException("删除操作中发生事务错误: " + e.getMessage(), e);
+            throw new ServiceException("删除操作中发生事务错误: " + e.getMessage());
         } catch (Exception e) {
             // 捕获其他异常
-            throw new ServiceException("删除用户总积分时发生未知错误: " + e.getMessage(), e);
+            throw new ServiceException("删除用户总积分时发生未知错误: " + e.getMessage());
         }
     }
 
