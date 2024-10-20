@@ -12,4 +12,5 @@ public interface UserBonusService extends IService<UserDetailBonusDo> {
      */
     void addUserDetailBonus(UserDetailBonusReqDTO requestParam);
 
+
 }

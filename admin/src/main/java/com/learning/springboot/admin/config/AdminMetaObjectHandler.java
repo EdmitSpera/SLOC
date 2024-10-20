@@ -6,6 +6,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+
 @Slf4j
 @Component
 public class AdminMetaObjectHandler implements MetaObjectHandler {

@@ -1,10 +1,13 @@
 package com.learning.springboot.integration.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @TableName("sloc_user_bonus")
 public class UserBonusDo {
     /**
@@ -15,22 +18,24 @@ public class UserBonusDo {
     /**
      * 用户id
      */
-    private Integer userId;
+    private Long userId;
 
     /**
      * 日常活动积分
      */
-    private Integer dailyBonus;
+    @TableField(fill = FieldFill.INSERT)
+    private int dailyBonus;
 
     /**
      * 项目活动积分
      */
-    private Integer projectBonus;
+    @TableField(fill = FieldFill.INSERT)
+    private int projectBonus;
 
     /**
      * 总积分
      */
-    private Integer totalBonus;
+    private int totalBonus;
 
     /**
      * 删除标识

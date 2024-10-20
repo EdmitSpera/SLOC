@@ -1,8 +1,11 @@
 package com.learning.springboot.integration.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
+
 
 import java.util.Date;
 
@@ -48,10 +51,12 @@ public class UserDetailBonusDo {
     /**
      * 插入时间
      */
+    @TableField(value = "create_time",fill = FieldFill.INSERT)
     private Date createTime;
 
     /**
      * 删除标识
      */
+    @TableField(fill = FieldFill.INSERT)
     private int del_flag;
 }
