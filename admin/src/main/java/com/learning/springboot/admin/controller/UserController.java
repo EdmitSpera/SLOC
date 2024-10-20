@@ -3,6 +3,7 @@ package com.learning.springboot.admin.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.learning.springboot.admin.dto.req.*;
 import com.learning.springboot.admin.dto.resp.UserAccountRespDTO;
+import com.learning.springboot.admin.dto.resp.UserIdRespDTO;
 import com.learning.springboot.admin.dto.resp.UserInformationRespDTO;
 import com.learning.springboot.admin.dto.resp.UserPageRespDTO;
 import com.learning.springboot.admin.service.UserService;
@@ -42,20 +43,20 @@ public class UserController {
     }
 
     @Operation(summary = "删除用户")
-    @PutMapping("/api/sloc/admin/delete")
+    @PostMapping("/api/sloc/admin/delete")
     public Result<Void> delete(@RequestBody deleteUserReqDTO requestParam){
         userService.delete(requestParam);
         return Results.success();
     }
 
     @Operation(summary = "根据学号获取账号信息")
-    @PostMapping("/api/sloc/admin/getUserAccount")
+    @GetMapping("/api/sloc/admin/getUserAccount")
     public Result<UserAccountRespDTO> getUserAccount(@RequestBody UserAccountReqDTO requestParam){
         return Results.success(userService.getUserAccount(requestParam));
     }
 
     @Operation(summary = "根据真实姓名获取用户信息")
-    @PostMapping("/api/sloc/admin/getUserInformation")
+    @GetMapping("/api/sloc/admin/getUserInformation")
     public Result<UserInformationRespDTO> getUserInformation(@RequestBody UserInformationReqDTO requestParam){
         return Results.success(userService.getUserInformation(requestParam));
     }
@@ -78,5 +79,11 @@ public class UserController {
     @GetMapping("/api/sloc/admin/getUserPage")
     public Result<IPage<UserPageRespDTO>> getUserPage(@RequestBody UserPageReqDTO requestParam){
         return Results.success(userService.getUserPage(requestParam));
+    }
+
+    @Operation(summary = "根据学号查询用户id")
+    @GetMapping("/api/sloc/admin/getUserId")
+    public Result<UserIdRespDTO> getUserId(@RequestBody UserIdReqDTO requestParam){
+        return Results.success(userService.getUserId(requestParam));
     }
 }
