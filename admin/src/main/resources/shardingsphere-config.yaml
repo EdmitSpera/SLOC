@@ -51,7 +51,7 @@ rules:
 #        # 分片数量
 #        props:
 #          sharding-count: 16
-#
+
   - !ENCRYPT
     # 需要加密的表集合
     tables:
