@@ -1,6 +1,8 @@
 package com.learning.springboot.admin.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
 import com.alibaba.fastjson2.JSON;
@@ -16,6 +18,7 @@ import com.learning.springboot.admin.dao.entity.UserDo;
 import com.learning.springboot.admin.dao.mapper.UserMapper;
 import com.learning.springboot.admin.dto.req.*;
 import com.learning.springboot.admin.dto.resp.UserAccountRespDTO;
+import com.learning.springboot.admin.dto.resp.UserIdRespDTO;
 import com.learning.springboot.admin.dto.resp.UserInformationRespDTO;
 import com.learning.springboot.admin.dto.resp.UserPageRespDTO;
 import com.learning.springboot.admin.service.UserService;
@@ -33,7 +36,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.learning.springboot.admin.common.constants.RedisCacheConstant.ADMIN_USER_KEY;
+import static com.learning.springboot.framework.constants.RedisCacheConstant.ADMIN_USER_KEY;
 import static com.learning.springboot.framework.errorcode.BaseErrorCode.USER_DONT_EXIT;
 import static com.learning.springboot.framework.errorcode.BaseErrorCode.USER_NAME_VERIFY_ERROR;
 
@@ -55,11 +58,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
     public void register(registerUserReqDTO requestParam) {
         try {
             UserDo userDo = BeanUtil.toBean(requestParam, UserDo.class);
+            long user_id = IdUtil.getSnowflake().nextId();
+            userDo.setUserId(user_id);
             baseMapper.insert(userDo);
 
             // 加入缓存
             String username = requestParam.getUsername();
-            String userKey = ADMIN_USER_KEY + username;
+            String studentNumber = requestParam.getStudentNumber();
+            String userKey = ADMIN_USER_KEY + studentNumber;
 
             stringRedisTemplate.opsForHash().put(
                     userKey,
@@ -349,6 +355,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
             UserPageRespDTO result = BeanUtil.toBean(each, UserPageRespDTO.class);
             return result;
         });
+    }
+
+    @Override
+    public UserIdRespDTO getUserId(UserIdReqDTO requestParam) {
+        UserIdRespDTO result = new UserIdRespDTO();
+        String studentNumber = requestParam.getStudentNumber();
+        String userKey = ADMIN_USER_KEY + studentNumber;
+
+        // 先查缓存
+        // 假设username在register方法中存储为hash中的字段
+        String username = requestParam.getUsername(); // 需要通过请求参数获取username
+        String cachedUserJson = (String) stringRedisTemplate.opsForHash().get(userKey, username);
+
+        if (cachedUserJson != null) {
+            // 将JSON字符串转换为UserDo对象
+            UserDo cachedUser = JSON.parseObject(cachedUserJson, UserDo.class);
+            result.setUser_id(String.valueOf(cachedUser.getUserId())); // 设置用户ID
+            return result;
+        }
+
+        // 直接查数据库
+        LambdaQueryWrapper<UserDo> queryWrapper = Wrappers.lambdaQuery(UserDo.class)
+                .eq(UserDo::getDelFlag, 0)
+                .eq(UserDo::getStudentNumber, requestParam.getStudentNumber());
+        UserDo userDo = baseMapper.selectOne(queryWrapper);
+        if (userDo != null) {
+            String userId = String.valueOf(userDo.getUserId());
+            result.setUser_id(userId);
+            return result;
+        }
+        result.setUser_id(null);
+        return result;
     }
 
 }
