@@ -12,12 +12,15 @@ import com.learning.springboot.integration.dao.entity.UserBonusDo;
 import com.learning.springboot.integration.dao.entity.UserDetailBonusDo;
 import com.learning.springboot.integration.dao.mapper.UserBonusMapper;
 import com.learning.springboot.integration.dao.mapper.UserDetailBonusMapper;
+import com.learning.springboot.integration.dto.req.DeleteBonusReqDTO;
+import com.learning.springboot.integration.dto.req.DeleteDetailBonusReqDTO;
 import com.learning.springboot.integration.dto.req.UserDetailBonusReqDTO;
 import com.learning.springboot.integration.service.UserBonusService;
 import com.learning.springboot.integration.util.SemesterUtil;
 import lombok.RequiredArgsConstructor;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -77,6 +80,120 @@ public class UserBonusServiceImpl extends ServiceImpl<UserDetailBonusMapper, Use
     }
 
     /**
+     * 删除积分明细
+     * @param requestParam
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteUserDetailBonus(DeleteDetailBonusReqDTO requestParam) {
+        try {
+            // 依次找到对应的明细记录 总积分记录
+            LambdaQueryWrapper<UserDetailBonusDo> detailQueryWrapper = Wrappers.lambdaQuery(UserDetailBonusDo.class)
+                    .eq(UserDetailBonusDo::getUserId, requestParam.getUserId())
+                    .eq(UserDetailBonusDo::getDel_flag, 0);
+            LambdaQueryWrapper<UserBonusDo> bonusQueryWrapper = Wrappers.lambdaQuery(UserBonusDo.class)
+                    .eq(UserBonusDo::getUserId, requestParam.getUserId())
+                    .eq(UserBonusDo::getDel_flag, 0);
+
+            UserDetailBonusDo userDetailBonusDo = baseMapper.selectOne(detailQueryWrapper);
+            UserBonusDo userBonusDo = userBonusMapper.selectOne(bonusQueryWrapper);
+
+            // 非空检查，防止空指针异常
+            if (userDetailBonusDo == null) {
+                throw new ClientException("未找到对应的加分明细记录");
+            }
+            if (userBonusDo == null) {
+                throw new ClientException("未找到对应的总积分记录");
+            }
+
+            // 逻辑删除对应的明细记录
+            userDetailBonusDo.setDel_flag(1);
+            LambdaUpdateWrapper<UserDetailBonusDo> bonusDoLambdaUpdateWrapper = Wrappers.lambdaUpdate(UserDetailBonusDo.class)
+                    .eq(UserDetailBonusDo::getUserId, requestParam.getUserId())
+                    .eq(UserDetailBonusDo::getDel_flag, 0);
+            int detailUpdate = baseMapper.update(userDetailBonusDo, bonusDoLambdaUpdateWrapper);
+            if (detailUpdate != 1) {
+                throw new DatabaseException("删除加分明细记录失败");
+            }
+
+            // 扣减总积分记录
+            String bonusType = userDetailBonusDo.getBonusType();
+            int points = userDetailBonusDo.getPoints();
+            int totalBonus = userBonusDo.getTotalBonus();
+
+            // 根据加分类型更新积分
+            if (bonusType.equals("日常社团活动")) {
+                int dailyBonus = userBonusDo.getDailyBonus() - points;
+                userBonusDo.setDailyBonus(dailyBonus);
+            } else if (bonusType.equals("项目活动策划")) {
+                int projectBonus = userBonusDo.getProjectBonus() - points;
+                userBonusDo.setProjectBonus(projectBonus);
+            }
+            userBonusDo.setTotalBonus(totalBonus - points);
+
+            LambdaUpdateWrapper<UserBonusDo> userBonusDoLambdaUpdateWrapper = Wrappers.lambdaUpdate(UserBonusDo.class)
+                    .eq(UserBonusDo::getUserId, requestParam.getUserId())
+                    .eq(UserBonusDo::getDel_flag, 0);
+            int bonusUpdate = userBonusMapper.update(userBonusDo, userBonusDoLambdaUpdateWrapper);
+            if (bonusUpdate != 1) {
+                throw new DatabaseException("更新用户总积分失败");
+            }
+        } catch (ClientException | DatabaseException e) {
+            // 捕获自定义异常，直接抛出
+            throw e;
+        } catch (TransactionException e) {
+            // 捕获事务异常并抛出
+            throw new ServiceException("删除积分操作中发生事务错误: " + e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他未知异常
+            throw new ServiceException("删除用户加分记录时发生未知错误: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 删除总积分
+     * @param requestParam
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteUserBonus(DeleteBonusReqDTO requestParam) {
+        try {
+            // 构建删除用户加分明细的更新条件
+            LambdaUpdateWrapper<UserDetailBonusDo> userDetailBonusDoLambdaUpdateWrapper = Wrappers.lambdaUpdate(UserDetailBonusDo.class)
+                    .eq(UserDetailBonusDo::getUserId, requestParam.getUserId())
+                    .eq(UserDetailBonusDo::getDel_flag, 0)
+                    .set(UserDetailBonusDo::getDel_flag, 1);
+
+            // 构建删除用户总积分的更新条件
+            LambdaUpdateWrapper<UserBonusDo> userBonusDoLambdaUpdateWrapper = Wrappers.lambdaUpdate(UserBonusDo.class)
+                    .eq(UserBonusDo::getUserId, requestParam.getUserId())
+                    .eq(UserBonusDo::getDel_flag, 0)
+                    .set(UserBonusDo::getDel_flag, 1);
+
+            // 执行更新操作
+            int detailUpdate = baseMapper.update(null, userDetailBonusDoLambdaUpdateWrapper);
+            int bonusUpdate = userBonusMapper.update(null, userBonusDoLambdaUpdateWrapper);
+
+            // 检查更新结果
+            if (detailUpdate <= 0) {
+                throw new DatabaseException("删除用户加分明细记录失败");
+            }
+            if (bonusUpdate <= 0) {
+                throw new DatabaseException("删除用户总积分记录失败");
+            }
+        } catch (DatabaseException e) {
+            // 捕获数据库相关异常并抛出
+            throw e;
+        } catch (TransactionException e) {
+            // 捕获事务异常并抛出
+            throw new ServiceException("删除操作中发生事务错误: " + e.getMessage(), e);
+        } catch (Exception e) {
+            // 捕获其他异常
+            throw new ServiceException("删除用户总积分时发生未知错误: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * 将用户积分明细加入到总积分统计中
      */
     @Transactional(rollbackFor = Exception.class)
@@ -119,7 +236,7 @@ public class UserBonusServiceImpl extends ServiceImpl<UserDetailBonusMapper, Use
                 }
                 // 汇总总积分
                 int newTotalBonus = totalBonus + points;
-                existDo.setTotalBonus(totalBonus);
+                existDo.setTotalBonus(newTotalBonus);
                 LambdaUpdateWrapper<UserBonusDo> updateWrapper = Wrappers.lambdaUpdate(UserBonusDo.class)
                         .eq(UserBonusDo::getDel_flag, 0)
                         .eq(UserBonusDo::getSummaryId, existDo.getSummaryId());
