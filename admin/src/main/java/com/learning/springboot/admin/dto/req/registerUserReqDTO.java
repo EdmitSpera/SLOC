@@ -7,8 +7,6 @@ import lombok.Data;
  */
 @Data
 public class registerUserReqDTO {
-    private Long userId;
-
     /**
      * 学号
      */
