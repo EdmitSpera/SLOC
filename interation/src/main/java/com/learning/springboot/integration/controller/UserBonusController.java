@@ -1,10 +1,12 @@
 package com.learning.springboot.integration.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.learning.springboot.framework.result.Result;
 import com.learning.springboot.framework.result.Results;
-import com.learning.springboot.integration.dto.req.DeleteBonusReqDTO;
-import com.learning.springboot.integration.dto.req.DeleteDetailBonusReqDTO;
-import com.learning.springboot.integration.dto.req.UserDetailBonusReqDTO;
+import com.learning.springboot.integration.dto.req.*;
+import com.learning.springboot.integration.dto.resp.GetBonusRespDTO;
+import com.learning.springboot.integration.dto.resp.GetDetailBonusRespDTO;
+import com.learning.springboot.integration.dto.resp.GetPageBonusRespDTO;
 import com.learning.springboot.integration.service.UserBonusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,4 +42,17 @@ public class UserBonusController {
         userBonusService.deleteUserBonus(requestParam);
         return Results.success();
     }
+
+    @Operation(summary = "获取用户总积分")
+    @GetMapping("/api/sloc/bonus/getBonus")
+    public Result<GetBonusRespDTO> getBonus(@RequestBody GetBonusReqDTO requestParam){
+        return Results.success(userBonusService.getBonus(requestParam));
+    }
+
+    @Operation(summary = "获取用户积分明细")
+    @GetMapping("/api/sloc/bonus/getDetailBonus")
+    public Result<IPage<GetDetailBonusRespDTO>> getDetailBonus(@RequestBody GetDetailBonusReqDTO requestParam){
+        return Results.success(userBonusService.getDetailBonus(requestParam));
+    }
+
 }

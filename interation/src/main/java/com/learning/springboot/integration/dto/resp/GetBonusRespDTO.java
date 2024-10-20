@@ -1,45 +1,35 @@
-package com.learning.springboot.integration.dao.entity;
+package com.learning.springboot.integration.dto.resp;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-@TableName("sloc_user_bonus")
-public class UserBonusDo {
+public class GetBonusRespDTO {
     /**
-     * 总积分id
+     * 真实姓名
      */
-    private Long summaryId;
+    private String realName;
 
     /**
-     * 用户id
+     * 部门
      */
-    private Long userId;
+    private String department;
 
     /**
      * 日常活动积分
      */
-    @TableField(fill = FieldFill.INSERT)
     private int dailyBonus;
 
     /**
      * 项目活动积分
      */
-    @TableField(fill = FieldFill.INSERT)
     private int projectBonus;
 
     /**
      * 总积分
      */
     private int totalBonus;
-
-
-    /**
-     * 删除标识
-     */
-    private int del_flag;
 }

@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Slf4j
 @Component
-public class AdminMetaObjectHandler implements MetaObjectHandler {
+public class AdminMetaObjectHandler implements MetaObjectHandler{
     @Override
     public void insertFill(MetaObject metaObject) {
         strictInsertFill(metaObject, "createTime", Date::new, Date.class);

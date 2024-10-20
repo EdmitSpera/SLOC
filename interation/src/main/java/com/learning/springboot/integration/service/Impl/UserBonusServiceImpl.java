@@ -1,20 +1,26 @@
 package com.learning.springboot.integration.service.Impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.learning.springboot.framework.exception.ClientException;
 import com.learning.springboot.framework.exception.ServiceException;
 import com.learning.springboot.integration.common.enums.BonusPointsEnum;
 import com.learning.springboot.integration.dao.entity.UserBonusDo;
 import com.learning.springboot.integration.dao.entity.UserDetailBonusDo;
+import com.learning.springboot.integration.dao.entity.UserDo;
 import com.learning.springboot.integration.dao.mapper.UserBonusMapper;
 import com.learning.springboot.integration.dao.mapper.UserDetailBonusMapper;
-import com.learning.springboot.integration.dto.req.DeleteBonusReqDTO;
-import com.learning.springboot.integration.dto.req.DeleteDetailBonusReqDTO;
-import com.learning.springboot.integration.dto.req.UserDetailBonusReqDTO;
+import com.learning.springboot.integration.dao.mapper.UserMapper;
+import com.learning.springboot.integration.dto.req.*;
+import com.learning.springboot.integration.dto.resp.GetBonusRespDTO;
+import com.learning.springboot.integration.dto.resp.GetDetailBonusRespDTO;
+import com.learning.springboot.integration.dto.resp.GetPageBonusRespDTO;
 import com.learning.springboot.integration.service.UserBonusService;
 import com.learning.springboot.integration.util.SemesterUtil;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +40,8 @@ public class UserBonusServiceImpl extends ServiceImpl<UserDetailBonusMapper, Use
     private final SemesterUtil semesterUtil = new SemesterUtil();
 
     private final UserBonusMapper userBonusMapper;
+
+    private final UserMapper userMapper;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -201,6 +209,102 @@ public class UserBonusServiceImpl extends ServiceImpl<UserDetailBonusMapper, Use
             throw new ServiceException("删除用户总积分时发生未知错误: " + e.getMessage());
         }
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GetBonusRespDTO getBonus(GetBonusReqDTO requestParam) {
+        try {
+            // 查询基础用户信息
+            LambdaQueryWrapper<UserDo> userQueryWrapper = Wrappers.lambdaQuery(UserDo.class)
+                    .eq(UserDo::getUserId, requestParam.getUserId())
+                    .eq(UserDo::getDelFlag, 0);
+
+            // 查询总积分信息
+            LambdaQueryWrapper<UserBonusDo> bonusQueryWrapper = Wrappers.lambdaQuery(UserBonusDo.class)
+                    .eq(UserBonusDo::getUserId, requestParam.getUserId())
+                    .eq(UserBonusDo::getDel_flag, 0);
+
+            // 查询用户和积分信息
+            UserDo userDo = userMapper.selectOne(userQueryWrapper);
+            if (userDo == null) {
+                throw new ClientException("未找到对应的用户信息");
+            }
+
+            UserBonusDo userBonusDo = userBonusMapper.selectOne(bonusQueryWrapper);
+            if (userBonusDo == null) {
+                throw new ClientException("未找到用户的积分记录");
+            }
+
+            // 返回封装的结果
+            return GetBonusRespDTO.builder()
+                    .realName(userDo.getRealName())
+                    .department(userDo.getDepartment())
+                    .dailyBonus(userBonusDo.getDailyBonus())
+                    .projectBonus(userBonusDo.getProjectBonus())
+                    .totalBonus(userBonusDo.getTotalBonus())
+                    .build();
+
+        } catch (ClientException e) {
+            // 捕获自定义的客户端异常
+            throw e;
+        } catch (Exception e) {
+            // 捕获其他未知异常
+            throw new ServiceException("查询用户总积分时发生未知错误: " + e.getMessage());
+        }
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public IPage<GetDetailBonusRespDTO> getDetailBonus(GetDetailBonusReqDTO requestParam) {
+        try {
+            // 构造分页
+            Page<UserDetailBonusDo> page = new Page<>(requestParam.getCurrent(), requestParam.getSize());
+
+            // 查询条件
+            LambdaQueryWrapper<UserDetailBonusDo> queryWrapper = Wrappers.lambdaQuery(UserDetailBonusDo.class)
+                    .eq(UserDetailBonusDo::getUserId, requestParam.getUserId())
+                    .eq(UserDetailBonusDo::getDel_flag, 0);
+
+            // 查询基础用户信息
+            LambdaQueryWrapper<UserDo> userQueryWrapper = Wrappers.lambdaQuery(UserDo.class)
+                    .eq(UserDo::getUserId, requestParam.getUserId())
+                    .eq(UserDo::getDelFlag, 0);
+
+            // 查询用户和积分信息
+            UserDo userDo = userMapper.selectOne(userQueryWrapper);
+            if (userDo == null) {
+                throw new ClientException("未找到对应的用户信息");
+            }
+
+            // 分页查询
+            IPage<UserDetailBonusDo> detailBonusDoPage = baseMapper.selectPage(page, queryWrapper);
+            if (detailBonusDoPage == null || detailBonusDoPage.getRecords().isEmpty()) {
+                throw new ClientException("未找到用户的加分明细记录");
+            }
+
+            // 转换为响应DTO
+            return detailBonusDoPage.convert(each -> {
+                try {
+                    GetDetailBonusRespDTO bean = BeanUtil.toBean(each, GetDetailBonusRespDTO.class);
+                    bean.setRealName(userDo.getRealName());
+                    bean.setDepartment(userDo.getDepartment());
+                    return bean;
+                } catch (Exception e) {
+                    throw new ServiceException("转换加分明细记录失败: " + e.getMessage());
+                }
+            });
+
+        } catch (ClientException e) {
+            // 捕获自定义异常
+            throw e;
+        } catch (Exception e) {
+            // 捕获其他未知异常
+            throw new ServiceException("查询用户加分明细时发生未知错误: " + e.getMessage());
+        }
+    }
+
+
 
     /**
      * 将用户积分明细加入到总积分统计中

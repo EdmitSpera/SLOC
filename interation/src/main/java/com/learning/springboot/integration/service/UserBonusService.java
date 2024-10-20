@@ -1,11 +1,13 @@
 package com.learning.springboot.integration.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.learning.springboot.integration.dao.entity.UserBonusDo;
 import com.learning.springboot.integration.dao.entity.UserDetailBonusDo;
-import com.learning.springboot.integration.dto.req.DeleteBonusReqDTO;
-import com.learning.springboot.integration.dto.req.DeleteDetailBonusReqDTO;
-import com.learning.springboot.integration.dto.req.UserDetailBonusReqDTO;
+import com.learning.springboot.integration.dto.req.*;
+import com.learning.springboot.integration.dto.resp.GetBonusRespDTO;
+import com.learning.springboot.integration.dto.resp.GetDetailBonusRespDTO;
+import com.learning.springboot.integration.dto.resp.GetPageBonusRespDTO;
 
 public interface UserBonusService extends IService<UserDetailBonusDo> {
     /**
@@ -25,4 +27,19 @@ public interface UserBonusService extends IService<UserDetailBonusDo> {
      * @param requestParam
      */
     void deleteUserBonus(DeleteBonusReqDTO requestParam);
+
+    /**
+     * 查询用户总积分
+     * @param requestParam
+     * @return
+     */
+    GetBonusRespDTO getBonus(GetBonusReqDTO requestParam);
+
+    /**
+     * 查询用户积分明细分页
+     * @param requestParam
+     * @return
+     */
+    IPage<GetDetailBonusRespDTO> getDetailBonus(GetDetailBonusReqDTO requestParam);
+
 }

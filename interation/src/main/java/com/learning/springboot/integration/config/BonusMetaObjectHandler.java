@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class BonusMetaObjectHandler implements MetaObjectHandler {
+public class BonusMetaObjectHandler  implements MetaObjectHandler{
     @Override
     public void insertFill(MetaObject metaObject) {
         strictInsertFill(metaObject, "createTime", Date::new, Date.class);
