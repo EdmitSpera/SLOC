@@ -6,12 +6,14 @@
       <list>
         <option value="$PROJECT_DIR$/admin/pom.xml" />
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/interation/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/backend/untitled/pom.xml" />
         <option value="$PROJECT_DIR$/freamwork/pom.xml" />
+        <option value="$PROJECT_DIR$/management/pom.xml" />
       </set>
     </option>
   </component>
