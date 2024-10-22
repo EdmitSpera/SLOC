@@ -6,7 +6,6 @@ import com.learning.springboot.framework.result.Results;
 import com.learning.springboot.integration.dto.req.*;
 import com.learning.springboot.integration.dto.resp.GetBonusRespDTO;
 import com.learning.springboot.integration.dto.resp.GetDetailBonusRespDTO;
-import com.learning.springboot.integration.dto.resp.GetPageBonusRespDTO;
 import com.learning.springboot.integration.service.UserBonusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
