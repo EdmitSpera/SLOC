@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -67,6 +68,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
             String studentNumber = requestParam.getStudentNumber();
             String userKey = ADMIN_USER_KEY + studentNumber;
 
+            // TODO 这里是在缓存中明文存储信息 如果redis被攻击了有泄漏个人信息的风险 可优化
             stringRedisTemplate.opsForHash().put(
                     userKey,
                     username,
@@ -182,6 +184,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
 
         LambdaUpdateWrapper<UserDo> updateWrapper = Wrappers.lambdaUpdate(userDo)
                 .eq(UserDo::getUsername, requestParam.getUsername())
+                .set(UserDo::getUsername, userDo.getUsername() + "_deleted_" + System.currentTimeMillis())
+                .set(UserDo::getDeletionTime, new Date())
                 .set(UserDo::getDelFlag, 1);
         int updateRow = baseMapper.update(null, updateWrapper);
 
@@ -190,8 +194,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
         }
 
         // 删除缓存中的用户
-        String username = requestParam.getUsername();
-        String userKey = ADMIN_USER_KEY + username;
+        String studentNumber = userDo.getStudentNumber();
+        String userKey = ADMIN_USER_KEY + studentNumber;
         stringRedisTemplate.delete(userKey); // 删除缓存
     }
 
