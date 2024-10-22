@@ -79,7 +79,6 @@
                       }
                     }
                   ],
-
                   "body": {
                     "type": "crud",
                     "draggable": true,
@@ -126,18 +125,6 @@
                     "filterTogglable": true,
                     "headerToolbar": [
                       "bulkActions",
-                      {
-                        "type": "tpl",
-                        "tpl": "定制内容示例：当前有 ${count} 条数据。",
-                        "className": "v-middle"
-                      },
-                      {
-                        "type": "link",
-                        "href": "https://www.baidu.com",
-                        "body": "百度一下",
-                        "htmlTarget": "_parent",
-                        "className": "v-middle"
-                      },
                       {
                         "type": "columns-toggler",
                         "align": "right"
@@ -364,14 +351,129 @@
                   }
                 }
               },
-
               {
                 "label": "积分管理",
                 "url": "2",
                 "schema": {
                   "type": "page",
-                  "title": "页面A-2",
-                  "body": "页面A-2"
+                  "title": "协会成员信息管理",
+                  "toolbar": [
+                    {
+                      "type": "button",
+                      "actionType": "dialog",
+                      "label": "新增",
+                      "icon": "fa fa-plus pull-left",
+                      "primary": true,
+                      "dialog": {
+                        "title": "新增",
+                        "body": {
+                          "type": "form",
+                          "name": "sample-edit-form",
+                          "api": "",
+                          "body": [
+                            {
+                              "type": "input-text",
+                              "name": "engine",
+                              "label": "Engine",
+                              "required": true
+                            },
+                            {
+                              "type": "divider"
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "browser",
+                              "label": "Browser",
+                              "required": true
+                            },
+                            {
+                              "type": "divider"
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "platform",
+                              "label": "Platform(s)",
+                              "required": true
+                            },
+                            {
+                              "type": "divider"
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "version",
+                              "label": "Engine version"
+                            },
+                            {
+                              "type": "divider"
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "grade",
+                              "label": "CSS grade"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "body": {
+                    "type": "grid",
+                    "columns": [
+                      {
+                        "md": 6,
+                        "body": [
+                          {
+                            "type": "crud",
+                            "api": "/amis/api/sample",
+                            "headerToolbar": [],
+                            "perPage": 10,
+                            "syncLocation": false,
+                            "itemAction": {
+                              "actionType": "reload",
+                              "target": "detailCRUD?id=${id}"
+                            },
+                            "columns": [
+                              {
+                                "name": "id",
+                                "label": "ID",
+                                "width": 30,
+                                "type": "text"
+                              },
+                              {
+                                "name": "platform",
+                                "label": "Platform(s)",
+                                "type": "text"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "md": 6,
+                        "body": [
+                          {
+                            "type": "crud",
+                            "name": "detailCRUD",
+                            "headerToolbar": [],
+                            "syncLocation": false,
+                            "api": "/amis/api/sample?perPage=10&id=${id}&waitSeconds=1",
+                            "columns": [
+                              {
+                                "name": "engine",
+                                "label": "Rendering engine",
+                                "type": "text"
+                              },
+                              {
+                                "name": "version",
+                                "label": "Engine version",
+                                "type": "text"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
                 }
               }
             ]
@@ -398,7 +500,7 @@
       },
       {
         "label": "审核模块",
-        "children":[
+        "children": [
           {
             "label": "积分审核",
             "url": "3",
