@@ -24,12 +24,12 @@ public class Result<T> implements Serializable {
     /**
      * 返回码
      */
-    private String code;
+    private String status;
 
     /**
      * 返回消息
      */
-    private String message;
+    private String msg;
 
     /**
      * 响应数据
@@ -42,6 +42,6 @@ public class Result<T> implements Serializable {
     private String requestId;
 
     public boolean isSuccess() {
-        return SUCCESS_CODE.equals(code);
+        return SUCCESS_CODE.equals(status);
     }
 }

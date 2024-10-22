@@ -16,7 +16,7 @@ public final class Results {
      */
     public static Result<Void> success() {
         return new Result<Void>()
-                .setCode(Result.SUCCESS_CODE);
+                .setStatus(Result.SUCCESS_CODE);
     }
 
     /**
@@ -24,7 +24,7 @@ public final class Results {
      */
     public static <T> Result<T> success(T data) {
         return new Result<T>()
-                .setCode(Result.SUCCESS_CODE)
+                .setStatus(Result.SUCCESS_CODE)
                 .setData(data);
     }
 
@@ -33,8 +33,8 @@ public final class Results {
      */
     public static Result<Void> failure() {
         return new Result<Void>()
-                .setCode(BaseErrorCode.SERVICE_ERROR.code())
-                .setMessage(BaseErrorCode.SERVICE_ERROR.message());
+                .setStatus(BaseErrorCode.SERVICE_ERROR.code())
+                .setMsg(BaseErrorCode.SERVICE_ERROR.message());
     }
 
     /**
@@ -46,8 +46,8 @@ public final class Results {
         String errorMessage = Optional.ofNullable(abstractException.getErrorMessage())
                 .orElse(BaseErrorCode.SERVICE_ERROR.message());
         return new Result<Void>()
-                .setCode(errorCode)
-                .setMessage(errorMessage);
+                .setStatus(errorCode)
+                .setMsg(errorMessage);
     }
 
     /**
@@ -55,7 +55,7 @@ public final class Results {
      */
     public static Result<Void> failure(String errorCode, String errorMessage) {
         return new Result<Void>()
-                .setCode(errorCode)
-                .setMessage(errorMessage);
+                .setStatus(errorCode)
+                .setMsg(errorMessage);
     }
 }
