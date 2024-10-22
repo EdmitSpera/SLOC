@@ -25,6 +25,7 @@ import com.learning.springboot.admin.service.UserService;
 import com.learning.springboot.admin.util.DigitNumberGenerator;
 import com.learning.springboot.framework.exception.ClientException;
 import com.learning.springboot.framework.exception.ServiceException;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -272,8 +273,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
 
         // 修改成功后更新缓存
         try {
-            String username = requestParam.getUsername();
-            String userKey = ADMIN_USER_KEY + username;
+            String studentNumber = userDo.getStudentNumber();
+            String userKey = ADMIN_USER_KEY + studentNumber;
 
             // 删除旧缓存数据
             stringRedisTemplate.delete(userKey);
@@ -282,7 +283,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
             userDo.setPassword(requestParam.getPassword()); // 更新用户信息中的密码
             stringRedisTemplate.opsForHash().put(
                     userKey,
-                    username,
+                    studentNumber,
                     JSON.toJSONString(userDo)
             );
             stringRedisTemplate.expire(userKey, 30, TimeUnit.DAYS); // 30天过期
@@ -309,7 +310,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
         // 更新数据库中的用户信息
         LambdaUpdateWrapper<UserDo> updateWrapper = Wrappers.lambdaUpdate(userDo)
                 .eq(UserDo::getDelFlag, 0)
-                .eq(UserDo::getUsername, requestParam.getUsername());
+                .eq(UserDo::getUsername, requestParam.getUsername())
+                .set(UserDo::getModifyTime, new Date());
         int updateRow = baseMapper.update(BeanUtil.toBean(requestParam, UserDo.class), updateWrapper);
 
         if (updateRow == 0) {
@@ -318,8 +320,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
 
         // 修改成功后更新缓存
         try {
-            String username = requestParam.getUsername();
-            String userKey = ADMIN_USER_KEY + username;
+            String studentNumber = userDo.getStudentNumber();
+            String userKey = ADMIN_USER_KEY + studentNumber;
 
             // 删除旧缓存数据
             stringRedisTemplate.delete(userKey);
@@ -327,7 +329,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
             // 插入新的用户信息到缓存
             stringRedisTemplate.opsForHash().put(
                     userKey,
-                    username,
+                    studentNumber,
                     JSON.toJSONString(userDo)
             );
             stringRedisTemplate.expire(userKey, 30, TimeUnit.DAYS); // 30天过期
@@ -344,6 +346,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
 
         // 构造查询条件
         LambdaQueryWrapper<UserDo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserDo::getDelFlag, 0);
 
         // 三种情况：1、根据年级查 2、根据部门查 3、根据年级和部门查
         if (requestParam.getGrade() != null) {
