@@ -1,1 +1,2 @@
 com.learning.springboot.framework.config.WebAutoConfiguration
+com.learning.springboot.framework.config.DataBaseConfiguration
