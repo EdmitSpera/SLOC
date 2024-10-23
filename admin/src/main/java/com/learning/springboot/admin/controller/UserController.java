@@ -2,10 +2,7 @@ package com.learning.springboot.admin.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.learning.springboot.admin.dto.req.*;
-import com.learning.springboot.admin.dto.resp.UserAccountRespDTO;
-import com.learning.springboot.admin.dto.resp.UserIdRespDTO;
-import com.learning.springboot.admin.dto.resp.UserInformationRespDTO;
-import com.learning.springboot.admin.dto.resp.UserPageRespDTO;
+import com.learning.springboot.admin.dto.resp.*;
 import com.learning.springboot.admin.service.UserService;
 import com.learning.springboot.framework.result.Result;
 import com.learning.springboot.framework.result.Results;
@@ -44,46 +41,63 @@ public class UserController {
 
     @Operation(summary = "删除用户")
     @PostMapping("/api/sloc/admin/delete")
-    public Result<Void> delete(@RequestBody deleteUserReqDTO requestParam){
+    public Result<Void> delete(@RequestBody deleteUserReqDTO requestParam) {
         userService.delete(requestParam);
         return Results.success();
     }
 
     @Operation(summary = "根据学号获取账号信息")
     @GetMapping("/api/sloc/admin/getUserAccount")
-    public Result<UserAccountRespDTO> getUserAccount(@RequestBody UserAccountReqDTO requestParam){
+    public Result<UserAccountRespDTO> getUserAccount(@RequestBody UserAccountReqDTO requestParam) {
         return Results.success(userService.getUserAccount(requestParam));
     }
 
     @Operation(summary = "根据真实姓名获取用户信息")
     @GetMapping("/api/sloc/admin/getUserInformation")
-    public Result<UserInformationRespDTO> getUserInformation(@RequestBody UserInformationReqDTO requestParam){
+    public Result<UserInformationRespDTO> getUserInformation(@RequestBody UserInformationReqDTO requestParam) {
         return Results.success(userService.getUserInformation(requestParam));
     }
 
     @Operation(summary = "根据账号修改密码")
     @PostMapping("/api/sloc/admin/updateUserAccount")
-    public Result<Void> updateUserAccount(@RequestBody updateUserAccReqDTO requestParam){
+    public Result<Void> updateUserAccount(@RequestBody updateUserAccReqDTO requestParam) {
         userService.updateUserAccount(requestParam);
         return Results.success();
     }
 
     @Operation(summary = "根据账号修改信息")
     @PostMapping("/api/sloc/admin/updateUserInformation")
-    public Result<Void> updateUserInformation(@RequestBody updateUserInfoReqDTO requestParam){
+    public Result<Void> updateUserInformation(@RequestBody updateUserInfoReqDTO requestParam) {
         userService.updateUserInformation(requestParam);
         return Results.success();
     }
 
     @Operation(summary = "根据年级或部门分页查询")
     @GetMapping("/api/sloc/admin/getUserPage")
-    public Result<IPage<UserPageRespDTO>> getUserPage(@RequestBody UserPageReqDTO requestParam){
-        return Results.success(userService.getUserPage(requestParam));
+    public Result<CustomPageRespDTO<UserPageRespDTO>> getUserPage(
+            @RequestParam String page,
+            @RequestParam String perPage,
+            @RequestParam String grade,
+            @RequestParam String department) {
+        IPage<UserPageRespDTO> pageResult = userService.getUserPage(
+                page,
+                perPage,
+                grade,
+                department
+        );
+        CustomPageRespDTO<UserPageRespDTO> customResponse = new CustomPageRespDTO<UserPageRespDTO>(
+                pageResult.getRecords(),
+                pageResult.getTotal(),
+                pageResult.getSize(),
+                pageResult.getCurrent(),
+                pageResult.getPages()
+        );
+        return Results.success(customResponse);
     }
 
     @Operation(summary = "根据学号查询用户id")
     @GetMapping("/api/sloc/admin/getUserId")
-    public Result<UserIdRespDTO> getUserId(@RequestBody UserIdReqDTO requestParam){
+    public Result<UserIdRespDTO> getUserId(@RequestBody UserIdReqDTO requestParam) {
         return Results.success(userService.getUserId(requestParam));
     }
 }

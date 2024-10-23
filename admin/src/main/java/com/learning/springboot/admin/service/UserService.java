@@ -54,25 +54,32 @@ public interface UserService extends IService<UserDo> {
 
     /**
      * 更新用户账号信息
+     *
      * @param requestParam
      */
     void updateUserAccount(updateUserAccReqDTO requestParam);
 
     /**
-     *更新用户信息
+     * 更新用户信息
+     *
      * @param requestParam
      */
     void updateUserInformation(updateUserInfoReqDTO requestParam);
 
     /**
-     * 获取分页用户信息
-     * @param requestParam
+     * 获取用户分页信息
+     *
+     * @param page
+     * @param perPage
+     * @param grade
+     * @param department
      * @return
      */
-    IPage<UserPageRespDTO> getUserPage(UserPageReqDTO requestParam);
+    IPage<UserPageRespDTO> getUserPage(String page, String perPage, String grade, String department);
 
     /**
      * 获取用户主键ID
+     *
      * @param requestParam
      * @return
      */

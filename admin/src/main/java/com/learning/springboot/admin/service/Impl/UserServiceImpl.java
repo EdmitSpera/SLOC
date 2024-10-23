@@ -340,24 +340,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDo> implements 
     }
 
     @Override
-    public IPage<UserPageRespDTO> getUserPage(UserPageReqDTO requestParam) {
+    public IPage<UserPageRespDTO> getUserPage(String  page, String perPage, String grade, String department) {
+        Long curPage = Long.valueOf(page);
+        Long curPerPage = Long.valueOf(perPage);
         // 获取分页参数
-        Page<UserDo> page = new Page<>(requestParam.getCurrent(), requestParam.getSize());
+        Page<UserDo> newPage = new Page<>(curPage, curPerPage);
 
         // 构造查询条件
         LambdaQueryWrapper<UserDo> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserDo::getDelFlag, 0);
 
-        // 三种情况：1、根据年级查 2、根据部门查 3、根据年级和部门查
-        if (requestParam.getGrade() != null) {
-            queryWrapper.eq(UserDo::getGrade, requestParam.getGrade());
+//        // 三种情况：1、根据年级查 2、根据部门查 3、根据年级和部门查
+        if (grade != "") {
+            queryWrapper.eq(UserDo::getGrade, Integer.parseInt(grade));
         }
-        if (requestParam.getDepartment() != null) {
-            queryWrapper.eq(UserDo::getDepartment, requestParam.getDepartment());
+        if (department != "") {
+            queryWrapper.eq(UserDo::getDepartment, department);
         }
 
         // 分页查询
-        IPage<UserDo> userPage = baseMapper.selectPage(page, queryWrapper);
+        IPage<UserDo> userPage = baseMapper.selectPage(newPage, queryWrapper);
         return userPage.convert(each -> {
             UserPageRespDTO result = BeanUtil.toBean(each, UserPageRespDTO.class);
             return result;
