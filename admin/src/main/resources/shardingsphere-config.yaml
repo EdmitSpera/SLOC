@@ -1,0 +1,47 @@
+# 分库分表的核心配置
+# 数据源集合
+dataSources:
+  ds_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/sloc?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+#    这里修改为自己的数据库账号密码
+    username: root
+    password: 123456
+
+# 分片规则
+rules:
+  - !ENCRYPT
+    # 需要加密的表集合
+    tables:
+      sloc_user:
+        # 用户表中哪些字段需要进行加密
+        columns:
+          student_number:
+            cipherColumn: student_number
+            encryptorName: common_encryptor
+          password:
+            cipherColumn: password
+            encryptorName: common_encryptor
+          mail:
+            cipherColumn: mail
+            encryptorName: common_encryptor
+          phone:
+            cipherColumn: phone
+            encryptorName: common_encryptor
+
+        # 是否按照密文字段查询
+        queryWithCipherColumn: true
+    # 加密算法
+    encryptors:
+      # 自定义加密算法名称
+      common_encryptor:
+        # 加密算法类型
+        type: AES
+        props:
+          # AES 加密密钥
+          aes-key-value: d6oadClrrb9A3GWo
+
+# 展现逻辑 SQL & 真实 SQL
+props:
+  sql-show: true

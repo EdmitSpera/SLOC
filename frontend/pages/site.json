@@ -1,0 +1,1829 @@
+{
+  "status": 0,
+  "msg": "",
+  "data": {
+    "pages": [
+      {
+        "label": "Home",
+        "url": "/",
+        "redirect": "/0"
+      },
+      {
+        "label": "管理模块",
+        "children": [
+          {
+            "label": "主页",
+            "url": "0",
+            "schema": {
+              "type": "page",
+              "title": "主页(TODO可视化界面)"
+            }
+          },
+          {
+            "label": "成员信息管理",
+            "children": [
+              {
+                "label": "信息管理",
+                "url": "1",
+                "schema": {
+                  "type": "page",
+                  "title": "协会成员信息管理",
+                  "toolbar": [
+                    {
+                      "type": "button",
+                      "actionType": "dialog",
+                      "label": "新增",
+                      "icon": "fa fa-plus pull-left",
+                      "primary": true,
+                      "dialog": {
+                        "title": "新增",
+                        "body": {
+                          "type": "form",
+                          "name": "sample-edit-form",
+                          "api": {
+                            "method": "post",
+                            "url": "http://127.0.0.1:8001/api/sloc/admin/register"
+                          },
+                          "messages": {
+                            "saveSuccess": "用户添加成功！",
+                            "saveFailed": "用户添加失败，请重试。"
+                          },
+                          "body": [
+                            {
+                              "type": "input-text",
+                              "name": "studentNumber",
+                              "label": "学号",
+                              "required": true,
+                              "validations": "isNumeric,minimum:10",
+                              "validationErrors": {
+                                "pattern": "请输入正确的学号"
+                              }
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "username",
+                              "label": "账号",
+                              "required": true
+                            },
+                            {
+                              "type": "input-password",
+                              "name": "password",
+                              "label": "密码",
+                              "required": true
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "realName",
+                              "label": "真实姓名",
+                              "required": true
+                            },
+                            {
+                              "type": "select",
+                              "name": "gender",
+                              "label": "性别",
+                              "required": true,
+                              "options": [
+                                {
+                                  "label": "男",
+                                  "value": "男"
+                                },
+                                {
+                                  "label": "女",
+                                  "value": "女"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "select",
+                              "name": "department",
+                              "label": "部门",
+                              "required": true,
+                              "options": [
+                                {
+                                  "label": "装备部",
+                                  "value": "装备部"
+                                },
+                                {
+                                  "label": "训练部",
+                                  "value": "训练部"
+                                },
+                                {
+                                  "label": "秘书部",
+                                  "value": "秘书部"
+                                },
+                                {
+                                  "label": "宣传部",
+                                  "value": "宣传部"
+                                },
+                                {
+                                  "label": "公关部",
+                                  "value": "公关部"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "input-email",
+                              "name": "mail",
+                              "label": "校内邮箱",
+                              "required": true,
+                              "pattern": "^[a-zA-Z0-9._%+-]+@stu\\.edu\\.cn$",
+                              "validationErrors": {
+                                "pattern": "请输入有效的校内邮箱，格式为 @stu.edu.cn"
+                              }
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "phone",
+                              "label": "手机号",
+                              "required": true,
+                              "validations": "isPhoneNumber",
+                              "validationErrors": {
+                                "pattern": "请输入正确的手机号"
+                              }
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "nickname",
+                              "label": "户外ID"
+                            },
+                            {
+                              "type": "input-number",
+                              "name": "grade",
+                              "label": "年级"
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "major",
+                              "label": "专业"
+                            },
+                            {
+                              "name": "campus",
+                              "label": "校区",
+                              "type": "select",
+                              "options": [
+                                {
+                                  "label": "桑浦山校区",
+                                  "value": "桑浦山校区"
+                                },
+                                {
+                                  "label": "东海岸校区",
+                                  "value": "东海岸校区"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "dormitory",
+                              "label": "宿舍"
+                            },
+                            {
+                              "name": "birthday",
+                              "label": "出生年月",
+                              "type": "input-date",
+                              "format": "YYYY-MM-DD"
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "nation",
+                              "label": "民族"
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "politicsStatus",
+                              "label": "政治面貌"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "body": {
+                    "type": "crud",
+                    "name": "crud",
+                    "draggable": true,
+                    "api": {
+                      "method": "get",
+                      "url": "http://127.0.0.1:8001/api/sloc/admin/getUserPage",
+                      "data": {
+                        "grade": "${grade || ''}",
+                        "department": "${department || ''}",
+                        "realName": "${realName || ''}",
+                        "page": "${page}",
+                        "perPage": "${perPage}"
+                      }
+                    },
+                    "perPage": 15,
+                    "keepItemSelectionOnPageChange": true,
+                    "maxKeepItemSelectionLength": 15,
+                    "autoFillHeight": true,
+                    "labelTpl": "${realName} ${department}",
+                    "filterTogglable": true,
+                    "filter": {
+                      "title": "条件搜索",
+                      "body": [
+                        {
+                          "type": "group",
+                          "body": [
+                            {
+                              "type": "input-text",
+                              "name": "realName",
+                              "label": "姓名",
+                              "placeholder": "请输入姓名"
+                            },
+                            {
+                              "type": "input-number",
+                              "name": "grade",
+                              "label": "年级",
+                              "placeholder": "请输入年级"
+                            },
+                            {
+                              "type": "select",
+                              "name": "department",
+                              "label": "部门",
+                              "placeholder": "请选择部门",
+                              "options": [
+                                {
+                                  "label": "装备部",
+                                  "value": "装备部"
+                                },
+                                {
+                                  "label": "训练部",
+                                  "value": "训练部"
+                                },
+                                {
+                                  "label": "秘书部",
+                                  "value": "秘书部"
+                                },
+                                {
+                                  "label": "宣传部",
+                                  "value": "宣传部"
+                                },
+                                {
+                                  "label": "公关部",
+                                  "value": "公关部"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "actions": [
+                        {
+                          "type": "reset",
+                          "label": "重置"
+                        },
+                        {
+                          "type": "submit",
+                          "level": "primary",
+                          "label": "查询"
+                        }
+                      ]
+                    },
+                    "headerToolbar": [
+                      "bulkActions",
+                      {
+                        "type": "columns-toggler",
+                        "align": "right"
+                      },
+                      {
+                        "type": "drag-toggler",
+                        "align": "right"
+                      },
+                      {
+                        "type": "pagination",
+                        "align": "right"
+                      }
+                    ],
+                    "footerToolbar": [
+                      "statistics",
+                      {
+                        "type": "pagination",
+                        "layout": "perPage,pager,go"
+                      }
+                    ],
+                    "columns": [
+                      {
+                        "name": "studentNumber",
+                        "label": "学号",
+                        "fixed": "left"
+                      },
+                      {
+                        "name": "realName",
+                        "label": "姓名",
+                        "fixed": "left"
+                      },
+                      {
+                        "name": "username",
+                        "label": "账号",
+                        "fixed": "left"
+                      },
+                      {
+                        "name": "nickname",
+                        "label": "户外ID",
+                        "fixed": "left"
+                      },
+                      {
+                        "name": "gender",
+                        "label": "性别"
+                      },
+                      {
+                        "name": "department",
+                        "label": "部门"
+                      },
+                      {
+                        "name": "grade",
+                        "label": "年级"
+                      },
+                      {
+                        "name": "major",
+                        "label": "专业"
+                      },
+                      {
+                        "name": "phone",
+                        "label": "手机号"
+                      },
+                      {
+                        "name": "campus",
+                        "label": "校区"
+                      },
+                      {
+                        "name": "dormitory",
+                        "label": "宿舍"
+                      },
+                      {
+                        "name": "birthday",
+                        "label": "出生年月",
+                        "type": "date",
+                        "format": "YYYY-MM-DD"
+                      },
+                      {
+                        "name": "nation",
+                        "label": "民族"
+                      },
+                      {
+                        "name": "politicsStatus",
+                        "label": "政治面貌"
+                      },
+                      {
+                        "type": "operation",
+                        "label": "操作",
+                        "width": 100,
+                        "buttons": [
+                          {
+                            "type": "button",
+                            "icon": "fa fa-pencil",
+                            "tooltip": "编辑",
+                            "actionType": "drawer",
+                            "drawer": {
+                              "position": "left",
+                              "size": "lg",
+                              "title": "编辑",
+                              "body": {
+                                "type": "form",
+                                "name": "sample-edit-form",
+                                "api": "http://127.0.0.1:8001/api/sloc/admin/updateUserInformation",
+                                "messages": {
+                                  "saveSuccess": "用户信息修改成功！",
+                                  "saveFailed": "用户信息修改失败，请重试。"
+                                },
+                                "reload": "crud",
+                                "body": [
+                                  {
+                                    "type": "input-text",
+                                    "name": "studentNumber",
+                                    "label": "学号",
+                                    "required": true
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "type": "input-text",
+                                    "name": "realName",
+                                    "label": "姓名",
+                                    "required": true
+                                  },
+                                  {
+                                    "type": "hidden",
+                                    "name": "username",
+                                    "label": "账号",
+                                    "required": true
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "type": "input-text",
+                                    "name": "nickname",
+                                    "label": "户外ID",
+                                    "required": true
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "type": "select",
+                                    "name": "gender",
+                                    "label": "性别",
+                                    "required": true,
+                                    "options": [
+                                      {
+                                        "label": "男",
+                                        "value": "男"
+                                      },
+                                      {
+                                        "label": "女",
+                                        "value": "女"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "type": "select",
+                                    "name": "department",
+                                    "label": "部门",
+                                    "required": true,
+                                    "options": [
+                                      "装备部",
+                                      "训练部",
+                                      "秘书部",
+                                      "宣传部",
+                                      "公关部"
+                                    ]
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "type": "input-text",
+                                    "name": "grade",
+                                    "label": "年级",
+                                    "required": true
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "type": "input-text",
+                                    "name": "major",
+                                    "label": "专业"
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "type": "input-text",
+                                    "name": "phone",
+                                    "label": "手机号"
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "name": "campus",
+                                    "label": "校区",
+                                    "type": "select",
+                                    "options": [
+                                      {
+                                        "label": "桑浦山校区",
+                                        "value": "桑浦山校区"
+                                      },
+                                      {
+                                        "label": "东海岸校区",
+                                        "value": "东海岸校区"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "type": "input-text",
+                                    "name": "dormitory",
+                                    "label": "宿舍"
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "name": "birthday",
+                                    "label": "出生年月",
+                                    "type": "input-date",
+                                    "format": "YYYY-MM-DD"
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "type": "input-text",
+                                    "name": "nation",
+                                    "label": "民族"
+                                  },
+                                  {
+                                    "type": "divider"
+                                  },
+                                  {
+                                    "type": "input-text",
+                                    "name": "politicsStatus",
+                                    "label": "政治面貌"
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "type": "button",
+                            "icon": "fa fa-times text-danger",
+                            "actionType": "ajax",
+                            "tooltip": "删除",
+                            "confirmText": "您确认要删除?",
+                            "api": "post:http://127.0.0.1:8001/api/sloc/admin/delete/$username",
+                            "messages": {
+                              "success": "删除成功！",
+                              "failed": "删除失败，请重试！"
+                            }
+                          }
+                        ],
+                        "toggled": true
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "label": "积分管理",
+                "url": "2",
+                "schema": {
+                  "type": "page",
+                  "title": "协会成员信息管理",
+                  "toolbar": [
+                    {
+                      "type": "button",
+                      "actionType": "dialog",
+                      "label": "新增",
+                      "icon": "fa fa-plus pull-left",
+                      "primary": true,
+                      "dialog": {
+                        "title": "新增",
+                        "body": {
+                          "type": "form",
+                          "name": "sample-edit-form",
+                          "api": {
+                            "method": "post",
+                            "url": "http://127.0.0.1:8001/api/sloc/bonus/addUserBonus",
+                            "data": {
+                              "realName": "${realName}",
+                              "bonusItem": "${bonusItem}"
+                            }
+                          },
+                          "messages": {
+                            "saveSuccess": "积分明细添加成功！",
+                            "saveFailed": "积分明细添加失败，请重试。"
+                          },
+                          "body": [
+                            {
+                              "type": "input-text",
+                              "name": "realName",
+                              "label": "姓名",
+                              "required": true
+                            },
+                            {
+                              "type": "select",
+                              "name": "bonusType",
+                              "label": "加分类型",
+                              "required": true,
+                              "options": [
+                                {
+                                  "label": "日常社团活动",
+                                  "value": "日常社团活动"
+                                },
+                                {
+                                  "label": "项目活动策划",
+                                  "value": "项目活动策划"
+                                }
+                              ],
+                              "onUpdate": {
+                                "actionType": "reload",
+                                "target": "bonusItemSelect",
+                                "api": {
+                                  "method": "get",
+                                  "url": "http://127.0.0.1:8001/api/sloc/bonus/getBonusItems?bonusType=${bonusType}",
+                                  "headers": {
+                                    "Content-Type": "application/json"
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "type": "select",
+                              "name": "bonusItem",
+                              "label": "加分信息",
+                              "required": true,
+                              "id": "bonusItemSelect",
+                              "source": "http://127.0.0.1:8001/api/sloc/bonus/getBonusItems?bonusType=${bonusType}"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "body": {
+                    "type": "grid",
+                    "columns": [
+                      {
+                        "md": 6,
+                        "body": [
+                          {
+                            "type": "crud",
+                            "api": {
+                              "url": "http://127.0.0.1:8001/api/sloc/bonus/getBonus",
+                              "data": {
+                                "grade": "${grade || ''}",
+                                "department": "${department || ''}",
+                                "realName": "${realName || ''}",
+                                "page": "${page}",
+                                "perPage": "${perPage}"
+                              }
+                            },
+                            "headerToolbar": [],
+                            "perPage": 10,
+                            "syncLocation": false,
+                            "autoGenerateFilter": true,
+                            "filterTogglable": true,
+                            "itemAction": {
+                              "actionType": "reload",
+                              "target": "detailCRUD?userId=${userId}"
+                            },
+                            "columns": [
+                              {
+                                "name": "realName",
+                                "label": "姓名",
+                                "sortable": true,
+                                "type": "text",
+                                "searchable": {
+                                  "type": "input-text",
+                                  "name": "realName",
+                                  "label": "姓名",
+                                  "placeholder": "请输入姓名"
+                                }
+                              },
+                              {
+                                "name": "grade",
+                                "label": "年级",
+                                "sortable": true,
+                                "type": "text",
+                                "searchable": {
+                                  "type": "input-number",
+                                  "name": "grade",
+                                  "label": "年级",
+                                  "placeholder": "请输入年级"
+                                }
+                              },
+                              {
+                                "name": "department",
+                                "label": "部门",
+                                "sortable": true,
+                                "type": "text",
+                                "searchable": {
+                                  "type": "select",
+                                  "name": "department",
+                                  "label": "部门",
+                                  "placeholder": "请选择部门",
+                                  "options": [
+                                    {
+                                      "label": "装备部",
+                                      "value": "装备部"
+                                    },
+                                    {
+                                      "label": "训练部",
+                                      "value": "训练部"
+                                    },
+                                    {
+                                      "label": "秘书部",
+                                      "value": "秘书部"
+                                    },
+                                    {
+                                      "label": "宣传部",
+                                      "value": "宣传部"
+                                    },
+                                    {
+                                      "label": "公关部",
+                                      "value": "公关部"
+                                    }
+                                  ]
+                                }
+                              },
+                              {
+                                "name": "dailyBonus",
+                                "label": "日常社团活动加分",
+                                "sortable": true,
+                                "type": "text"
+                              },
+                              {
+                                "name": "projectBonus",
+                                "label": "项目活动策划加分",
+                                "sortable": true,
+                                "type": "text"
+                              },
+                              {
+                                "name": "totalBonus",
+                                "label": "总积分",
+                                "sortable": true,
+                                "type": "text"
+                              },
+                              {
+                                "type": "operation",
+                                "label": "操作",
+                                "width": 1,
+                                "buttons": [
+                                  {
+                                    "type": "button",
+                                    "icon": "fa fa-times text-danger",
+                                    "actionType": "ajax",
+                                    "tooltip": "删除",
+                                    "confirmText": "您确认要删除?",
+                                    "api": "post:http://127.0.0.1:8001/api/sloc/bonus/deleteBonus",
+                                    "messages": {
+                                      "success": "删除成功！",
+                                      "failed": "删除失败，请重试！"
+                                    },
+                                    "onEvent": {
+                                      "success": {
+                                        "actions": [
+                                          {
+                                            "actionType": "reload",
+                                            "componentId": "detailCRUD"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ],
+                                "toggled": true
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "md": 6,
+                        "body": [
+                          {
+                            "type": "crud",
+                            "name": "detailCRUD",
+                            "headerToolbar": [],
+                            "syncLocation": false,
+                            "autoGenerateFilter": true,
+                            "filterTogglable": true,
+                            "filter": {
+                              "controls": [
+                                {
+                                  "type": "select",
+                                  "name": "bonusType",
+                                  "label": "积分类型",
+                                  "placeholder": "请选择积分类型",
+                                  "options": [
+                                    {
+                                      "label": "日常社团活动",
+                                      "value": "日常社团活动"
+                                    },
+                                    {
+                                      "label": "项目活动策划",
+                                      "value": "项目活动策划"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "input-text",
+                                  "name": "academic",
+                                  "label": "学年度",
+                                  "placeholder": "请输入学年度"
+                                }
+                              ]
+                            },
+                            "api": {
+                              "url": "http://127.0.0.1:8001/api/sloc/bonus/getDetailBonus",
+                              "data": {
+                                "userId": "${userId || ''}",
+                                "bonusType": "${bonusType || ''}",
+                                "academic": "${academic || ''}",
+                                "page": "${page}",
+                                "perPage": "${perPage}"
+                              }
+                            },
+                            "columns": [
+                              {
+                                "name": "bonusType",
+                                "label": "积分类型",
+                                "type": "text"
+                              },
+                              {
+                                "name": "bonusItem",
+                                "label": "积分详情",
+                                "type": "text"
+                              },
+                              {
+                                "name": "points",
+                                "label": "分值",
+                                "type": "text"
+                              },
+                              {
+                                "name": "academic",
+                                "label": "学年度",
+                                "type": "text"
+                              },
+                              {
+                                "type": "operation",
+                                "label": "操作",
+                                "width": 1,
+                                "buttons": [
+                                  {
+                                    "type": "button",
+                                    "icon": "fa fa-times text-danger",
+                                    "actionType": "ajax",
+                                    "tooltip": "删除",
+                                    "confirmText": "您确认要删除?",
+                                    "api": {
+                                      "method": "post",
+                                      "url": "http://127.0.0.1:8001/api/sloc/bonus/deleteDetailBonus",
+                                      "data": {
+                                        "userId": "${userId || ''}",
+                                        "bonusItem": "${bonusItem || ''}"
+                                      }
+                                    },
+                                    "messages": {
+                                      "success": "删除成功！",
+                                      "failed": "删除失败，请重试！"
+                                    }
+                                  }
+                                ],
+                                "toggled": true
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "label": "项目管理",
+            "url": "3",
+            "schema": {
+              "type": "page",
+              "title": "项目管理",
+              "body": {
+                "type": "grid",
+                "columns": [
+                  {
+                    "md": 6,
+                    "body": [
+                      {
+                        "type": "crud",
+                        "name": "projectCrud",
+                        "api": {
+                          "url": "http://127.0.0.1:8001/api/sloc/project/getProjectPage",
+                          "data": {
+                            "type": "${type || ''}",
+                            "status": "${status || ''}",
+                            "page": "${page}",
+                            "perPage": "${perPage}"
+                          }
+                        },
+                        "headerToolbar": [
+                          {
+                            "type": "button",
+                            "actionType": "dialog",
+                            "label": "新增项目",
+                            "icon": "fa fa-plus pull-left",
+                            "primary": true,
+                            "dialog": {
+                              "title": "新增",
+                              "body": {
+                                "type": "form",
+                                "name": "project-add-form",
+                                "api": {
+                                  "method": "post",
+                                  "url": "http://127.0.0.1:8001/api/sloc/project/addProject",
+                                  "data": {
+                                    "projectName": "${projectName}",
+                                    "type": "${type}",
+                                    "status": "${status}",
+                                    "members": "${members}",
+                                    "beginTime": "${beginTime}",
+                                    "endTime": "${endTime}"
+                                  }
+                                },
+                                "messages": {
+                                  "saveSuccess": "项目添加成功！",
+                                  "saveFailed": "项目添加失败，请重试。"
+                                },
+                                "body": [
+                                  {
+                                    "type": "input-text",
+                                    "name": "projectName",
+                                    "label": "项目名称",
+                                    "required": true
+                                  },
+                                  {
+                                    "type": "select",
+                                    "name": "type",
+                                    "label": "项目类型",
+                                    "required": true,
+                                    "options": [
+                                      {
+                                        "label": "户外徒步",
+                                        "value": "户外徒步"
+                                      },
+                                      {
+                                        "label": "户外露营拓展",
+                                        "value": "户外露营拓展"
+                                      },
+                                      {
+                                        "label": "暑期大项目",
+                                        "value": "暑期大项目"
+                                      },
+                                      {
+                                        "label": "文体活动",
+                                        "value": "文体活动"
+                                      },
+                                      {
+                                        "label": "协会团队建设",
+                                        "value": "协会团队建设"
+                                      },
+                                      {
+                                        "label": "知识培训",
+                                        "value": "知识培训"
+                                      },
+                                      {
+                                        "label": "志愿活动",
+                                        "value": "志愿活动"
+                                      },
+                                      {
+                                        "label": "体能训练",
+                                        "value": "体能训练"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "select",
+                                    "name": "status",
+                                    "label": "项目状态",
+                                    "required": true,
+                                    "options": [
+                                      {
+                                        "label": "策划阶段",
+                                        "value": "策划阶段"
+                                      },
+                                      {
+                                        "label": "实施阶段",
+                                        "value": "实施阶段"
+                                      },
+                                      {
+                                        "label": "完成阶段",
+                                        "value": "完成阶段"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "input-date",
+                                    "name": "beginTime",
+                                    "label": "开始时间",
+                                    "format": "YYYY-MM-DD",
+                                    "required": true
+                                  },
+                                  {
+                                    "type": "input-date",
+                                    "name": "endTime",
+                                    "label": "结束时间",
+                                    "format": "YYYY-MM-DD",
+                                    "required": true
+                                  },
+                                  {
+                                    "type": "combo",
+                                    "name": "members",
+                                    "label": "成员信息",
+                                    "multiple": true,
+                                    "addable": true,
+                                    "removable": true,
+                                    "items": [
+                                      {
+                                        "type": "input-text",
+                                        "name": "realName",
+                                        "label": "成员姓名",
+                                        "required": true
+                                      },
+                                      {
+                                        "type": "select",
+                                        "name": "roleType",
+                                        "label": "角色类型",
+                                        "options": [
+                                          {
+                                            "label": "组长",
+                                            "value": "组长"
+                                          },
+                                          {
+                                            "label": "副组长",
+                                            "value": "副组长"
+                                          },
+                                          {
+                                            "label": "装备委员",
+                                            "value": "装备委员"
+                                          },
+                                          {
+                                            "label": "宣传委员",
+                                            "value": "宣传委员"
+                                          },
+                                          {
+                                            "label": "后勤委员",
+                                            "value": "后勤委员"
+                                          },
+                                          {
+                                            "label": "文秘委员",
+                                            "value": "文秘委员"
+                                          },
+                                          {
+                                            "label": "项目跟进人员",
+                                            "value": "项目跟进人员"
+                                          }
+                                        ],
+                                        "required": true
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ],
+                        "perPage": 10,
+                        "syncLocation": false,
+                        "autoGenerateFilter": true,
+                        "filterTogglable": true,
+                        "itemAction": {
+                          "actionType": "reload",
+                          "target": "detailProjectCRUD?projectName=${projectName}&projectId=${projectId}"
+                        },
+                        "columns": [
+                          {
+                            "name": "projectName",
+                            "label": "项目名",
+                            "sortable": true,
+                            "type": "text"
+                          },
+                          {
+                            "name": "type",
+                            "label": "项目类型",
+                            "sortable": true,
+                            "type": "text",
+                            "searchable": {
+                              "type": "select",
+                              "name": "type",
+                              "label": "项目类型",
+                              "placeholder": "请选择项目类型",
+                              "options": [
+                                {
+                                  "label": "户外徒步",
+                                  "value": "户外徒步"
+                                },
+                                {
+                                  "label": "户外露营拓展",
+                                  "value": "户外露营拓展"
+                                },
+                                {
+                                  "label": "暑期大项目",
+                                  "value": "暑期大项目"
+                                },
+                                {
+                                  "label": "文体活动",
+                                  "value": "文体活动"
+                                },
+                                {
+                                  "label": "协会团队建设",
+                                  "value": "协会团队建设"
+                                },
+                                {
+                                  "label": "知识培训",
+                                  "value": "知识培训"
+                                },
+                                {
+                                  "label": "志愿活动",
+                                  "value": "志愿活动"
+                                },
+                                {
+                                  "label": "体能训练",
+                                  "value": "体能训练"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "name": "status",
+                            "label": "项目状态",
+                            "sortable": true,
+                            "type": "text",
+                            "searchable": {
+                              "type": "select",
+                              "name": "status",
+                              "label": "项目状态",
+                              "placeholder": "请选择项目状态",
+                              "options": [
+                                {
+                                  "label": "策划阶段",
+                                  "value": "策划阶段"
+                                },
+                                {
+                                  "label": "实施阶段",
+                                  "value": "实施阶段"
+                                },
+                                {
+                                  "label": "完成阶段",
+                                  "value": "完成阶段"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "name": "beginTime",
+                            "label": "开始时间",
+                            "sortable": true,
+                            "type": "text"
+                          },
+                          {
+                            "name": "endTime",
+                            "label": "结束时间",
+                            "sortable": true,
+                            "type": "text"
+                          },
+                          {
+                            "type": "operation",
+                            "label": "操作",
+                            "width": 100,
+                            "buttons": [
+                              {
+                                "type": "button",
+                                "icon": "fa fa-pencil",
+                                "tooltip": "编辑",
+                                "actionType": "drawer",
+                                "drawer": {
+                                  "position": "left",
+                                  "size": "lg",
+                                  "title": "编辑",
+                                  "body": {
+                                    "type": "form",
+                                    "name": "sample-edit-form",
+                                    "api": {
+                                      "url": "http://127.0.0.1:8001/api/sloc/project/updateProject",
+                                      "method": "post"
+                                    },
+                                    "reload": "projectCrud",
+                                    "body": [
+                                      {
+                                        "type": "hidden",
+                                        "name": "projectId",
+                                        "label": "id"
+                                      },
+                                      {
+                                        "type": "input-text",
+                                        "name": "projectName",
+                                        "label": "项目名",
+                                        "required": true
+                                      },
+                                      {
+                                        "type": "select",
+                                        "name": "type",
+                                        "label": "项目类型",
+                                        "placeholder": "请选择项目类型",
+                                        "options": [
+                                          {
+                                            "label": "户外徒步",
+                                            "value": "户外徒步"
+                                          },
+                                          {
+                                            "label": "户外露营拓展",
+                                            "value": "户外露营拓展"
+                                          },
+                                          {
+                                            "label": "暑期大项目",
+                                            "value": "暑期大项目"
+                                          },
+                                          {
+                                            "label": "文体活动",
+                                            "value": "文体活动"
+                                          },
+                                          {
+                                            "label": "协会团队建设",
+                                            "value": "协会团队建设"
+                                          },
+                                          {
+                                            "label": "知识培训",
+                                            "value": "知识培训"
+                                          },
+                                          {
+                                            "label": "志愿活动",
+                                            "value": "志愿活动"
+                                          },
+                                          {
+                                            "label": "体能训练",
+                                            "value": "体能训练"
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "type": "select",
+                                        "name": "status",
+                                        "label": "项目状态",
+                                        "placeholder": "请选择项目状态",
+                                        "options": [
+                                          {
+                                            "label": "策划阶段",
+                                            "value": "策划阶段"
+                                          },
+                                          {
+                                            "label": "实施阶段",
+                                            "value": "实施阶段"
+                                          },
+                                          {
+                                            "label": "完成阶段",
+                                            "value": "完成阶段"
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "type": "divider"
+                                      },
+                                      {
+                                        "type": "input-date",
+                                        "name": "beginTime",
+                                        "label": "开始时间",
+                                        "format": "YYYY-MM-DD",
+                                        "required": true
+                                      },
+                                      {
+                                        "type": "divider"
+                                      },
+                                      {
+                                        "type": "input-date",
+                                        "name": "endTime",
+                                        "label": "结束时间",
+                                        "format": "YYYY-MM-DD",
+                                        "required": true
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "type": "button",
+                                "icon": "fa fa-times text-danger",
+                                "actionType": "ajax",
+                                "tooltip": "删除",
+                                "confirmText": "您确认要删除?",
+                                "api": "post:http://127.0.0.1:8001/api/sloc/project/deleteProject",
+                                "messages": {
+                                  "success": "删除成功！",
+                                  "failed": "删除失败，请重试！"
+                                }
+                              }
+                            ],
+                            "toggled": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "md": 6,
+                    "body": [
+                      {
+                        "type": "crud",
+                        "name": "detailProjectCRUD",
+                        "headerToolbar": [
+                          {
+                            "type": "button",
+                            "actionType": "dialog",
+                            "label": "新增项目成员",
+                            "icon": "fa fa-plus pull-left",
+                            "primary": true,
+                            "dialog": {
+                              "title": "新增项目成员",
+                              "body": {
+                                "type": "form",
+                                "name": "add-member-form",
+                                "api": {
+                                  "method": "post",
+                                  "url": "http://127.0.0.1:8001/api/sloc/project/addMember",
+                                  "data": {
+                                    "projectName": "${projectName}",
+                                    "realName": "${realName}",
+                                    "roleType": "${roleType}"
+                                  }
+                                },
+                                "messages": {
+                                  "saveSuccess": "项目成员添加成功！",
+                                  "saveFailed": "项目添加失败，请重试。"
+                                },
+                                "body": [
+                                  {
+                                    "type": "input-text",
+                                    "name": "projectName",
+                                    "label": "项目名称",
+                                    "disable": true,
+                                    "required": true
+                                  },
+                                  {
+                                    "type": "input-text",
+                                    "name": "realName",
+                                    "label": "成员姓名",
+                                    "required": true
+                                  },
+                                  {
+                                    "type": "select",
+                                    "name": "roleType",
+                                    "label": "成员角色",
+                                    "placeholder": "请选择成员角色",
+                                    "required": true,
+                                    "options": [
+                                      {
+                                        "label": "组长",
+                                        "value": "组长"
+                                      },
+                                      {
+                                        "label": "副组长",
+                                        "value": "副组长"
+                                      },
+                                      {
+                                        "label": "装备委员",
+                                        "value": "装备委员"
+                                      },
+                                      {
+                                        "label": "宣传委员",
+                                        "value": "宣传委员"
+                                      },
+                                      {
+                                        "label": "后勤委员",
+                                        "value": "后勤委员"
+                                      },
+                                      {
+                                        "label": "文秘委员",
+                                        "value": "文秘委员"
+                                      },
+                                      {
+                                        "label": "项目跟进人员",
+                                        "value": "项目跟进人员"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ],
+                        "syncLocation": false,
+                        "autoGenerateFilter": true,
+                        "filterTogglable": true,
+                        "api": {
+                          "url": "http://127.0.0.1:8001/api/sloc/project/getProjectMemberPage",
+                          "data": {
+                            "projectName": "${projectName || ''}",
+                            "page": "${page}",
+                            "perPage": "${perPage}"
+                          }
+                        },
+                        "columns": [
+                          {
+                            "name": "realName",
+                            "label": "姓名",
+                            "type": "text"
+                          },
+                          {
+                            "name": "department",
+                            "label": "部门",
+                            "type": "text"
+                          },
+                          {
+                            "name": "roleType",
+                            "label": "职位",
+                            "type": "text"
+                          },
+                          {
+                            "type": "operation",
+                            "label": "操作",
+                            "width": 100,
+                            "buttons": [
+                              {
+                                "type": "button",
+                                "icon": "fa fa-pencil",
+                                "tooltip": "编辑",
+                                "actionType": "drawer",
+                                "drawer": {
+                                  "position": "left",
+                                  "size": "lg",
+                                  "title": "编辑",
+                                  "body": {
+                                    "type": "form",
+                                    "name": "edit-member-form",
+                                    "api": {
+                                      "method": "post",
+                                      "url": "http://127.0.0.1:8001/api/sloc/project/updateMember",
+                                      "data": {
+                                        "projectId": "${projectId}",
+                                        "realName": "${realName}",
+                                        "roleType": "${roleType}"
+                                      }
+                                    },
+                                    "reload": "detailProjectCRUD",
+                                    "body": [
+                                      {
+                                        "type": "input-text",
+                                        "name": "projectId",
+                                        "label": "项目ID",
+                                        "required": true
+                                      },
+                                      {
+                                        "type": "input-text",
+                                        "name": "realName",
+                                        "label": "成员姓名",
+                                        "disabled": true,
+                                        "required": true
+                                      },
+                                      {
+                                        "type": "select",
+                                        "name": "roleType",
+                                        "label": "成员角色",
+                                        "placeholder": "请选择成员角色",
+                                        "required": true,
+                                        "options": [
+                                          {
+                                            "label": "组长",
+                                            "value": "组长"
+                                          },
+                                          {
+                                            "label": "副组长",
+                                            "value": "副组长"
+                                          },
+                                          {
+                                            "label": "装备委员",
+                                            "value": "装备委员"
+                                          },
+                                          {
+                                            "label": "宣传委员",
+                                            "value": "宣传委员"
+                                          },
+                                          {
+                                            "label": "后勤委员",
+                                            "value": "后勤委员"
+                                          },
+                                          {
+                                            "label": "文秘委员",
+                                            "value": "文秘委员"
+                                          },
+                                          {
+                                            "label": "项目跟进人员",
+                                            "value": "项目跟进人员"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "type": "button",
+                                "icon": "fa fa-times text-danger",
+                                "actionType": "ajax",
+                                "tooltip": "删除",
+                                "confirmText": "您确认要删除?",
+                                "api": "post:http://127.0.0.1:8001/api/sloc/project/deleteMember",
+                                "messages": {
+                                  "success": "删除成功！",
+                                  "failed": "删除失败，请重试！"
+                                }
+                              }
+                            ],
+                            "toggled": true
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "label": "装备管理",
+            "url": "4",
+            "schema": {
+              "type": "page",
+              "title": "装备后管",
+              "body": {
+                "type": "crud",
+                "name": "equipmentCrud",
+                "headerToolbar": [
+                  {
+                    "type": "button",
+                    "actionType": "dialog",
+                    "label": "新增",
+                    "icon": "fa fa-plus pull-left",
+                    "primary": true,
+                    "dialog": {
+                      "title": "新增",
+                      "body": {
+                        "type": "form",
+                        "name": "sample-edit-form",
+                        "api": {
+                          "method": "post",
+                          "url": "http://127.0.0.1:8001/api/sloc/equipment/addEquipment"
+                        },
+                        "messages": {
+                          "saveSuccess": "装备添加成功！",
+                          "saveFailed": "装备添加失败，请重试。"
+                        },
+                        "body": [
+                          {
+                            "type": "input-text",
+                            "name": "name",
+                            "label": "装备名称",
+                            "required": true
+                          },
+                          {
+                            "type": "select",
+                            "name": "type",
+                            "label": "装备类型",
+                            "required": true,
+                            "options": [
+                              {
+                                "label": "户外鞋服",
+                                "value": "户外鞋服"
+                              },
+                              {
+                                "label": "露营装备",
+                                "value": "露营装备"
+                              },
+                              {
+                                "label": "电子设备",
+                                "value": "电子设备"
+                              },
+                              {
+                                "label": "攀登装备",
+                                "value": "攀登装备"
+                              },
+                              {
+                                "label": "其他",
+                                "value": "其他"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "input-number",
+                            "name": "sum",
+                            "label": "库存数量",
+                            "required": true
+                          },
+                          {
+                            "type": "input-number",
+                            "name": "rent",
+                            "label": "租金"
+                          },
+                          {
+                            "type": "input-text",
+                            "name": "area",
+                            "label": "区域"
+                          },
+                          {
+                            "type": "input-number",
+                            "name": "col",
+                            "label": "列"
+                          },
+                          {
+                            "type": "input-number",
+                            "name": "tier",
+                            "label": "层"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "api": {
+                  "method": "get",
+                  "url": "http://127.0.0.1:8001/api/sloc/equipment/getEquipmentPage",
+                  "data": {
+                    "type": "${type || ''}",
+                    "page": "${page}",
+                    "perPage": "${perPage}"
+                  }
+                },
+                "quickSaveApi": "http://127.0.0.1:8001/api/sloc/equipment/quickUpdateEquipment",
+                "filter": {
+                  "title": "条件搜索",
+                  "body": [
+                    {
+                      "type": "group",
+                      "body": [
+                        {
+                          "type": "select",
+                          "name": "type",
+                          "label": "装备类型",
+                          "required": true,
+                          "options": [
+                            {
+                              "label": "户外鞋服",
+                              "value": "户外鞋服"
+                            },
+                            {
+                              "label": "露营装备",
+                              "value": "露营装备"
+                            },
+                            {
+                              "label": "电子设备",
+                              "value": "电子设备"
+                            },
+                            {
+                              "label": "攀登装备",
+                              "value": "攀登装备"
+                            },
+                            {
+                              "label": "其他",
+                              "value": "其他"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": "reset",
+                      "label": "重置"
+                    },
+                    {
+                      "type": "submit",
+                      "level": "primary",
+                      "label": "查询"
+                    }
+                  ]
+                },
+                "mode": "cards",
+                "defaultParams": {
+                  "perPage": 12
+                },
+                "draggable": true,
+                "card": {
+                  "header": {
+                    "title": "$name",
+                    "subTitle": "$type",
+                    "subTitlePlaceholder": "暂无说明",
+                    "avatarText": "${name}"
+                  },
+                  "actions": [
+                    {
+                      "type": "button",
+                      "label": "编辑",
+                      "actionType": "dialog",
+                      "dialog": {
+                        "title": "编辑",
+                        "body": {
+                          "type": "form",
+                          "name": "sample-edit-form",
+                          "api": "http://127.0.0.1:8001/api/sloc/equipment/updateEquipment",
+                          "messages": {
+                            "saveSuccess": "修改成功！",
+                            "saveFailed": "修改失败，请重试。"
+                          },
+                          "body": [
+                            {
+                              "type": "hidden",
+                              "name": "equipmentId",
+                              "label": "装备Id",
+                              "required": true
+                            },
+                            {
+                              "type": "divider"
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "name",
+                              "label": "名称",
+                              "required": true
+                            },
+                            {
+                              "type": "divider"
+                            },
+                            {
+                              "type": "select",
+                              "name": "type",
+                              "label": "装备类型",
+                              "required": true,
+                              "options": [
+                                {
+                                  "label": "户外鞋服",
+                                  "value": "户外鞋服"
+                                },
+                                {
+                                  "label": "露营装备",
+                                  "value": "露营装备"
+                                },
+                                {
+                                  "label": "电子设备",
+                                  "value": "电子设备"
+                                },
+                                {
+                                  "label": "攀登装备",
+                                  "value": "攀登装备"
+                                },
+                                {
+                                  "label": "其他",
+                                  "value": "其他"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "divider"
+                            },
+                            {
+                              "type": "input-number",
+                              "name": "sum",
+                              "label": "库存数量"
+                            },
+                            {
+                              "type": "divider"
+                            },
+                            {
+                              "type": "input-text",
+                              "name": "area",
+                              "label": "区域"
+                            },
+                            {
+                              "type": "input-number",
+                              "name": "col",
+                              "label": "列"
+                            },
+                            {
+                              "type": "input-number",
+                              "name": "tier",
+                              "label": "层"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "label": "删除",
+                      "actionType": "ajax",
+                      "confirmText": "您确认要删除?",
+                      "api": {
+                        "method": "post",
+                        "url": "http://127.0.0.1:8001/api/sloc/equipment/deleteEquipment",
+                        "messages": {
+                          "success": "删除成功！",
+                          "failed": "删除失败，请重试！"
+                        },
+                        "data": {
+                          "name": "${name || ''}"
+                        }
+                      }
+                    }
+                  ],
+                  "body": [
+                    {
+                      "name": "sum",
+                      "label": "数量",
+                      "sortable": true,
+                      "quickEdit": {
+                        "type": "input-number"
+                      }
+                    },
+                    {
+                      "name": "rent",
+                      "label": "租金"
+                    },
+                    {
+                      "name": "area",
+                      "label": "区域"
+                    },
+                    {
+                      "name": "col",
+                      "label": "列"
+                    },
+                    {
+                      "name": "tier",
+                      "label": "层"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
